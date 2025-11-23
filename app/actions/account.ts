@@ -7,7 +7,8 @@ import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
-export async function updateProfile(formData: FormData) {
+// CHANGE: Add 'prevState: any' as the first argument
+export async function updateProfile(prevState: any, formData: FormData) {
   const session = await auth();
   if (!session || !session.user) return { error: "Not logged in" };
 
@@ -15,7 +16,7 @@ export async function updateProfile(formData: FormData) {
   const newPassword = formData.get("newPassword") as string;
   const oldPassword = formData.get("oldPassword") as string;
 
-  // 1. Update Name (Easy)
+  // 1. Update Name
   if (name && name !== session.user.name) {
     await prisma.user.update({
       where: { id: session.user.id },
@@ -23,14 +24,14 @@ export async function updateProfile(formData: FormData) {
     });
   }
 
-  // 2. Update Password (Harder - requires verification)
+  // 2. Update Password
   if (newPassword && oldPassword) {
     const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     
     // Check if old password is correct
     const passwordsMatch = await bcrypt.compare(oldPassword, user?.password || "");
     if (!passwordsMatch) {
-      return { error: "Incorrect old password!" };
+      return { error: "Incorrect old password!" }; // Return error to UI
     }
 
     // Hash new password and save
@@ -42,5 +43,5 @@ export async function updateProfile(formData: FormData) {
   }
 
   revalidatePath("/");
-  return { success: "Profile updated successfully" };
+  return { success: "Profile updated successfully" }; // Return success to UI
 }
