@@ -2,18 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 
-export async function submitFeedback(formData: FormData) {
+// CHANGE: Added 'prevState' as the first argument
+export async function submitFeedback(prevState: any, formData: FormData) {
   const name = formData.get("name");
   const message = formData.get("message");
   
-  // In a real app, you would save this to prisma.feedback.create()
-  console.log("--------------------------------");
-  console.log("📬 NEW FEEDBACK RECEIVED");
-  console.log(`From: ${name}`);
-  console.log(`Message: ${message}`);
-  console.log("--------------------------------");
+  console.log(`📬 FEEDBACK: ${name} says "${message}"`);
 
-  // We don't redirect, we just want to clear the form (conceptually)
-  revalidatePath("/"); 
-  return { success: true };
+  // We don't need revalidatePath here strictly, but it doesn't hurt
+  return { success: true, message: "Message sent successfully!" };
 }

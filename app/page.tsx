@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import Link from "next/link";
 import { ArrowRight, Download, FileText, Send, Star, ShieldCheck, Users } from "lucide-react";
-import { submitFeedback } from "@/app/actions/home";
+import FeedbackForm from "@/components/FeedbackForm";
 
 const prisma = new PrismaClient();
 
@@ -153,7 +153,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* --- FEEDBACK FORM --- */}
+     {/* --- FEEDBACK FORM --- */}
       <section className="max-w-2xl mx-auto px-4 py-20">
         <div className="bg-[#064E3B] rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
           {/* Decorative Circle */}
@@ -163,34 +163,9 @@ export default async function Home() {
             <h2 className="text-3xl font-bold mb-2">Have a Request?</h2>
             <p className="text-white/70 mb-8">Found a bug or want a specific mod? Let me know directly.</p>
 
-            <form action={submitFeedback} className="space-y-4">
-              <div>
-                <label className="block text-sm font-bold text-white/80 mb-1">Your Name</label>
-                <input 
-                  type="text" 
-                  name="name" 
-                  required
-                  placeholder="Manager Name"
-                  className="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F97316]"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-white/80 mb-1">Message</label>
-                <textarea 
-                  name="message" 
-                  required
-                  rows={4}
-                  placeholder="Describe what you need..."
-                  className="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F97316]"
-                />
-              </div>
-              <button 
-                type="submit" 
-                className="w-full bg-[#F97316] text-white font-bold py-4 rounded-xl hover:bg-[#c2410c] transition flex items-center justify-center gap-2"
-              >
-                Send Feedback <Send size={18} />
-              </button>
-            </form>
+            {/* Replaced the raw form with our new Client Component */}
+            <FeedbackForm />
+            
           </div>
         </div>
       </section>
