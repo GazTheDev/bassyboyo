@@ -1,14 +1,22 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { sendFeedbackEmail } from "@/lib/mail"; // Import the helper
 
-// CHANGE: Added 'prevState' as the first argument
+// We accept prevState because we are using useActionState
 export async function submitFeedback(prevState: any, formData: FormData) {
-  const name = formData.get("name");
-  const message = formData.get("message");
+  const name = formData.get("name") as string;
+  const message = formData.get("message") as string;
   
-  console.log(`📬 FEEDBACK: ${name} says "${message}"`);
+  if (!name || !message) {
+    return { success: false, message: "Please fill out all fields." };
+  }
 
-  // We don't need revalidatePath here strictly, but it doesn't hurt
-  return { success: true, message: "Message sent successfully!" };
+  try {
+    // Send the email to YOU (the admin)
+    await sendFeedbackEmail(name, message);
+    return { success: true, message: "Message sent successfully!" };
+  } catch (error) {
+    console.error("Feedback Error:", error);
+    return { success: false, message: "Failed to send message. Try again." };
+  }
 }

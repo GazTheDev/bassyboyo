@@ -49,10 +49,10 @@ const item = await prisma.download.findUnique({
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8">
           
           {/* Header Section */}
-          <div className="bg-bassy-green p-8 text-white">
+          <div className="bg-[#064E3B] p-8 text-white">
             <div className="flex justify-between items-start">
               <div>
-                <span className="bg-bassy-orange text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wide">
+                <span className="bg-[#A36623] text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wide">
                   {item.category}
                 </span>
                 <h1 className="text-3xl font-bold mt-3">{item.title}</h1>
@@ -62,7 +62,7 @@ const item = await prisma.download.findUnique({
               <a 
                 href={item.fileUrl} 
                 target="_blank" 
-                className="bg-white text-bassy-green px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-bassy-orange hover:text-white transition-colors shadow-lg"
+                className="bg-white text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-[#C34410] hover:text-white transition-colors shadow-lg"
               >
                 <DownloadIcon size={20} /> Download
               </a>

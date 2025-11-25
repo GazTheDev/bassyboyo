@@ -123,8 +123,7 @@ export default async function Home() {
           <h2 className="text-3xl font-bold text-[#064E3B] mb-6">About BassyBoy</h2>
           <p className="text-lg text-gray-600 leading-relaxed mb-10">
             I've been playing Football Manager since the Championship Manager 01/02 days. 
-            This site is a collection of my personal tweaks, tactics that broke the match engine, 
-            and graphics I use to make the game feel alive. My goal is simple: make your save game better.
+            This site is a collection of my personal mods that I've created over the years to enhance my gameplay experience.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -132,8 +131,8 @@ export default async function Home() {
               <div className="bg-[#F97316]/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-[#F97316]">
                 <ShieldCheck size={24} />
               </div>
-              <h3 className="font-bold text-gray-900">Virus Free</h3>
-              <p className="text-sm text-gray-500 mt-2">All files checked manually before upload.</p>
+              <h3 className="font-bold text-gray-900">Transform Your Game!</h3>
+              <p className="text-sm text-gray-500 mt-2">With my mods you will be able to transform your Football Manager 26 gameplay!.</p>
             </div>
             <div className="p-4 bg-gray-50 rounded-xl">
               <div className="bg-[#F97316]/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-[#F97316]">

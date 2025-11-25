@@ -18,7 +18,7 @@ export default function ResetForm() {
           {state.success}
         </p>
         <p className="text-green-600 text-xs mt-4">
-          (Check your VS Code terminal for the link since we are in dev mode!)
+          (Check your spam/junk folder if you don't see it in your inbox.)
         </p>
       </div>
     );
