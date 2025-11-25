@@ -122,7 +122,7 @@ function SubmitButton() {
     <button 
       type="submit" 
       disabled={pending}
-      className="w-full bg-[#F97316] text-white font-bold py-4 rounded-xl hover:bg-[#c2410c] transition flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg hover:shadow-orange-500/20"
+      className="w-full bg-[#064E3B] text-white font-bold py-4 rounded-xl hover:bg-[#c2410c] transition flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg hover:shadow-orange-500/20"
     >
       {pending ? "Signing In..." : (
         <>

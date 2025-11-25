@@ -6,35 +6,48 @@ import { redirect } from "next/navigation";
 
 const prisma = new PrismaClient();
 
-export async function registerUser(formData: FormData) {
+// CHANGE: Added 'prevState: any' to support useActionState
+export async function registerUser(prevState: any, formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const terms = formData.get("terms"); // Checkbox value
 
-  if (!email || !password) return;
+  // 1. Validation
+  if (!name || !email || !password) {
+    return { error: "Please fill in all fields." };
+  }
 
-  // 1. Check if user exists
+  if (!terms) {
+    return { error: "You must accept the Terms and Conditions to join." };
+  }
+
+  // 2. Check if user exists
   const existingUser = await prisma.user.findUnique({
     where: { email },
   });
 
   if (existingUser) {
-    // In a real app, return an error. For now, we just stop.
-    return;
+    return { error: "This email is already registered. Try logging in." };
   }
 
-  // 2. Hash password (Security best practice)
+  // 3. Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // 3. Create User
-  await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-      role: "USER", // Default role
-    },
-  });
+  // 4. Create User
+  try {
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        role: "USER",
+      },
+    });
+  } catch (e) {
+    return { error: "Something went wrong. Please try again." };
+  }
 
-  redirect("/api/auth/signin"); // Send them to login page
+  // 5. Redirect to Login
+  redirect("/login");
 }
