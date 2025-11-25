@@ -28,7 +28,7 @@ export default function CommentForm({ targetId, type }: CommentFormProps) {
         <div className="flex justify-end">
           <button 
             type="submit" 
-            className="bg-bassy-green text-white px-6 py-2 rounded-lg font-bold hover:bg-bassy-green-dark transition"
+            className="bg-orange-800 text-white px-6 py-2 rounded-lg font-bold hover:bg-bassy-green-dark transition"
           >
             Post Comment
           </button>

@@ -33,7 +33,7 @@ export const generatePasswordResetToken = async (email: string) => {
 // --- FIX 1: Use JSX Syntax for Reset Email ---
 export const sendPasswordResetEmail = async (email: string, token: string) => {
   await resend.emails.send({
-    from: "BassyBoy Mods <onboarding@resend.dev>",
+    from: "BassyBoy Mods <info@bassyboy.com>",
     to: email, 
     subject: "Reset your Password",
     react: <ResetEmail token={token} />, // <--- Changed from function call to JSX
