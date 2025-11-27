@@ -4,7 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar"; // <--- 1. Import it
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-
+import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export default function RootLayout({
         {children}
                 <Analytics />
         <SpeedInsights />
-
+<Footer/>
       </body>
     </html>
   );
