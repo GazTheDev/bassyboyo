@@ -49,6 +49,10 @@ export default async function AdminLayout({
           <Link href="/admin/users" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition">
             <Users size={20} /> Users
           </Link>
+
+          <Link href="/admin/newsletter" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition">
+  <book size={20} /> Newsletter
+</Link>
         </nav>
 
         <div className="p-4 border-t border-white/10">

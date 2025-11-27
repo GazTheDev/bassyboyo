@@ -1,8 +1,10 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { ArrowRight, Download, FileText, Send, Star, ShieldCheck, Users, Youtube } from "lucide-react";
+import { ArrowRight, Download, FileText, Send, Star, ShieldCheck, Users, Youtube, Lightbulb, Mail } from "lucide-react";
 import FeedbackForm from "@/components/FeedbackForm";
-
+import HomepageSearch from "@/components/HomepageSearch";
+import NewsletterForm from "@/components/NewsletterForm";
+import NewsletterPopup from "@/components/NewsletterPopup";
 export default async function Home() {
   // 1. Fetch latest 5 Downloads
   const recentDownloads = await prisma.download.findMany({
@@ -19,25 +21,44 @@ export default async function Home() {
   // --- CONFIG: CHANGE YOUR VIDEO ID HERE ---
   const LATEST_VIDEO_ID = "74ru5kxciXw"; // Replace this ID with your actual YouTube video ID
 
+  // --- CONFIG: FM TIPS ---
+  const fmTips = [
+    "Check your Medical Centre weekly to prevent injury crises before they happen.",
+    "Don't ignore Team Cohesion. A happy squad overperforms; an unhappy one collapses.",
+    "Use 'Demand More' shout when drawing against a weaker team, but only after 60 mins.",
+    "Scout nations with high youth ratings like Brazil, Argentina, and Colombia for cheap wonderkids.",
+    "In lower leagues, physical attributes (Pace, Strength) often matter more than technical ones.",
+    "Set individual training focuses for your young players to mold them into specific roles.",
+    "If you're conceding late goals, switch your goalkeeper's distribution to 'Slow Pace' to kill time.",
+    "Analyze the 'Data Hub' pass maps to see if your striker is isolated during matches.",
+  ];
+  const randomTip = fmTips[Math.floor(Math.random() * fmTips.length)];
+
   return (
     <main className="min-h-screen bg-gray-50">
       
       {/* --- HERO SECTION --- */}
-      <section className="bg-[#064E3B] text-white py-20 px-4 relative overflow-hidden">
-        {/* Abstract Background Shapes */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#F97316]/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+      {/* Added z-30 to the section itself to ensure the Search Dropdown floats OVER the Tip Bar (z-20) */}
+      <section className="bg-[#064E3B] text-white py-20 px-4 relative z-30">
+        {/* Abstract Background Shapes (Wrapped to prevent overflow clipping the search dropdown) */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#F97316]/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+        </div>
 
-        <div className="max-w-6xl mx-auto relative z-10 text-center">
+        <div className="max-w-6xl mx-auto relative text-center">
           <span className="inline-block py-1 px-3 rounded-full bg-[#F97316]/20 border border-[#F97316] text-[#F97316] text-xs font-bold uppercase tracking-wider mb-6">
             The Ultimate FM Resource
           </span>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
             Manage Like a <span className="text-[#F97316]">Legend</span>
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-10">
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
             Welcome to BassyBoy Mods. We provide the elite tactics, wonderkid databases, and graphical overhauls you need to dominate the league.
           </p>
+
+          {/* SEARCH BAR */}
+          <HomepageSearch />
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
@@ -55,6 +76,18 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* --- RANDOM TIP BAR --- */}
+      {/* z-20 sits below the Hero section (z-30) so the dropdown can cover it */}
+      <div className="bg-[#F97316] text-white py-3 px-4 shadow-md relative z-20">
+        <div className="max-w-6xl mx-auto flex items-center justify-center gap-3 text-center text-sm md:text-base font-medium">
+          <Lightbulb className="shrink-0 text-white fill-white/20" size={20} />
+          <span>
+            <span className="font-bold opacity-80 uppercase tracking-wider mr-2">Tip:</span> 
+            {randomTip}
+          </span>
+        </div>
+      </div>
 
       {/* --- LATEST YOUTUBE VIDEO SECTION --- */}
       <section className="bg-black py-12 border-b border-gray-800">
@@ -76,11 +109,11 @@ export default async function Home() {
             </div>
              <div className="text-center mt-6">
                 <a 
-                    href="https://www.youtube.com/@BassyBoy" 
+                    href="https://youtube.com" 
                     target="_blank" 
                     className="inline-flex items-center gap-2 text-gray-400 hover:text-[#F97316] transition-colors text-sm font-medium"
                 >
-                    Subscribe for more modding tutorials <ArrowRight size={16} />
+                    Subscribe for more tactics <ArrowRight size={16} />
                 </a>
             </div>
         </div>
@@ -183,6 +216,26 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* --- NEWSLETTER SECTION (THE SCOUTING REPORT) --- */}
+      <section className="py-20 bg-gray-900 relative overflow-hidden">
+        {/* Background mesh effect */}
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(#F97316 1px, transparent 1px)", backgroundSize: "30px 30px" }}></div>
+        
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 bg-[#F97316]/20 border border-[#F97316] text-[#F97316] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+            <Mail size={14} /> Monthly Updates
+          </div>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">
+            The Scouting Report
+          </h2>
+          <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto">
+            Get the latest wonderkid shortlists, tactic testing results, and site updates delivered straight to your inbox. No spam, just winning.
+          </p>
+          
+          <NewsletterForm />
+        </div>
+      </section>
+
       {/* --- FEEDBACK FORM --- */}
       <section className="max-w-2xl mx-auto px-4 py-20">
         <div className="bg-[#064E3B] rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
@@ -194,7 +247,7 @@ export default async function Home() {
             <p className="text-white/70 mb-8">Found a bug or want a specific mod? Let me know directly.</p>
 
             <FeedbackForm />
-            
+            <NewsletterPopup />
           </div>
         </div>
       </section>

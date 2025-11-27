@@ -67,6 +67,7 @@ export default async function AdminDashboard() {
           <p className="text-4xl font-extrabold text-purple-600 mt-2">{commentCount}</p>
           <p className="text-xs text-gray-400 mt-1">Total comments</p>
         </div>
+        
 
       </div>
 
