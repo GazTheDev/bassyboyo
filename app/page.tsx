@@ -1,8 +1,7 @@
-import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
+import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { ArrowRight, Download, FileText, Send, Star, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, Download, FileText, Send, Star, ShieldCheck, Users, Youtube } from "lucide-react";
 import FeedbackForm from "@/components/FeedbackForm";
-
 
 export default async function Home() {
   // 1. Fetch latest 5 Downloads
@@ -16,6 +15,9 @@ export default async function Home() {
     take: 5,
     orderBy: { createdAt: "desc" },
   });
+
+  // --- CONFIG: CHANGE YOUR VIDEO ID HERE ---
+  const LATEST_VIDEO_ID = "74ru5kxciXw"; // Replace this ID with your actual YouTube video ID
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -51,6 +53,36 @@ export default async function Home() {
               <FileText size={20} /> Read Tutorials
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* --- LATEST YOUTUBE VIDEO SECTION --- */}
+      <section className="bg-black py-12 border-b border-gray-800">
+        <div className="max-w-4xl mx-auto px-4">
+            <div className="flex items-center justify-center gap-2 mb-6 text-white/90">
+                <Youtube className="text-[#FF0000]" size={28} />
+                <h2 className="text-2xl font-bold">Latest Channel Upload</h2>
+            </div>
+            
+            {/* 16:9 Aspect Ratio Container */}
+            <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-gray-900">
+                <iframe 
+                    className="absolute top-0 left-0 w-full h-full"
+                    src={`https://www.youtube.com/embed/${LATEST_VIDEO_ID}`} 
+                    title="Latest YouTube Video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                ></iframe>
+            </div>
+             <div className="text-center mt-6">
+                <a 
+                    href="https://www.youtube.com/@BassyBoy" 
+                    target="_blank" 
+                    className="inline-flex items-center gap-2 text-gray-400 hover:text-[#F97316] transition-colors text-sm font-medium"
+                >
+                    Subscribe for more modding tutorials <ArrowRight size={16} />
+                </a>
+            </div>
         </div>
       </section>
 
@@ -151,7 +183,7 @@ export default async function Home() {
         </div>
       </section>
 
-     {/* --- FEEDBACK FORM --- */}
+      {/* --- FEEDBACK FORM --- */}
       <section className="max-w-2xl mx-auto px-4 py-20">
         <div className="bg-[#064E3B] rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
           {/* Decorative Circle */}
@@ -161,7 +193,6 @@ export default async function Home() {
             <h2 className="text-3xl font-bold mb-2">Have a Request?</h2>
             <p className="text-white/70 mb-8">Found a bug or want a specific mod? Let me know directly.</p>
 
-            {/* Replaced the raw form with our new Client Component */}
             <FeedbackForm />
             
           </div>

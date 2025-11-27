@@ -43,9 +43,9 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
 // --- FIX 2: Use JSX Syntax for Feedback Email ---
 export const sendFeedbackEmail = async (name: string, message: string) => {
   await resend.emails.send({
-    from: "BassyBoy Website <onboarding@resend.dev>",
+    from: "BassyBoy Website <info@bassyboy.com>",
     // Remember to change this to your real email for testing!
-    to: "YOUR_REAL_EMAIL@gmail.com", 
+    to: "info@bassyboy.com", 
     subject: `New Feedback from ${name}`,
     react: <FeedbackEmail name={name} message={message} />, // <--- Changed from function call to JSX
   });
