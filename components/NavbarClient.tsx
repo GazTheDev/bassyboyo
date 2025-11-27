@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, User, LogOut, LogIn, UserPlus } from "lucide-react";
+import { Menu, X, User, LogOut, LogIn, UserPlus, ChevronDown, Calculator } from "lucide-react";
 import { handleSignOut } from "@/app/actions/auth-actions";
 
 export default function NavbarClient({ session }: { session: any }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobileToolsOpen, setIsMobileToolsOpen] = useState(false);
   
   // STRICT CHECK: Ensure we actually have a user object
   const isLoggedIn = !!session?.user;
@@ -28,6 +29,40 @@ export default function NavbarClient({ session }: { session: any }) {
             <NavLink href="/">Home</NavLink>
             <NavLink href="/downloads">Downloads</NavLink>
             <NavLink href="/articles">Articles</NavLink>
+            
+            {/* TOOLS MEGA DROPDOWN */}
+            <div className="relative group">
+              <button className="flex items-center gap-1 text-gray-300 hover:text-[#F97316] px-3 py-2 rounded-md text-sm font-medium transition-colors outline-none">
+                Tools <ChevronDown size={14} className="group-hover:rotate-180 transition-transform duration-200" />
+              </button>
+              
+              {/* Dropdown Panel */}
+              <div className="absolute left-1/2 -translate-x-1/2 mt-0 pt-4 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-center z-50">
+                <div className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden relative">
+                  {/* Decorative top bar */}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[#F97316]"></div>
+                  
+                  <div className="p-2">
+                    <Link 
+                      href="/tools/wage-calculator"
+                      className="flex items-start gap-3 p-3 rounded-lg hover:bg-orange-50 transition-colors group/item"
+                    >
+                      <div className="bg-[#064E3B]/10 text-[#064E3B] p-2 rounded-md group-hover/item:bg-[#F97316] group-hover/item:text-white transition-colors shrink-0">
+                        <Calculator size={20} />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-gray-900 group-hover/item:text-[#F97316]">Wage Calculator</div>
+                        <div className="text-xs text-gray-500 leading-tight mt-1">Convert annual salaries to weekly wages instantly.</div>
+                      </div>
+                    </Link>
+                    
+                    {/* Placeholder for future tool */}
+                    {/* <div className="p-3 text-xs text-center text-gray-400 italic">More tools coming soon...</div> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <NavLink href="/socials">Socials</NavLink>
             
             {/* Admin Link (Only visible if ADMIN) */}
@@ -99,11 +134,35 @@ export default function NavbarClient({ session }: { session: any }) {
 
       {/* --- MOBILE DROPDOWN MENU --- */}
       {isOpen && (
-        <div className="md:hidden bg-[#053d2e] border-t border-white/10 animate-fade-in">
+        <div className="md:hidden bg-[#053d2e] border-t border-white/10 animate-fade-in max-h-[calc(100vh-4rem)] overflow-y-auto">
           <div className="px-4 pt-4 pb-6 space-y-2">
             <MobileNavLink href="/" onClick={() => setIsOpen(false)}>Home</MobileNavLink>
             <MobileNavLink href="/downloads" onClick={() => setIsOpen(false)}>Downloads</MobileNavLink>
             <MobileNavLink href="/articles" onClick={() => setIsOpen(false)}>Articles</MobileNavLink>
+            
+            {/* Mobile Tools Toggle */}
+            <div>
+              <button 
+                onClick={() => setIsMobileToolsOpen(!isMobileToolsOpen)}
+                className="flex items-center justify-between w-full px-4 py-3 rounded-lg text-base font-bold text-gray-300 hover:text-white hover:bg-white/5 transition"
+              >
+                Tools
+                <ChevronDown size={16} className={`transition-transform duration-200 ${isMobileToolsOpen ? 'rotate-180 text-[#F97316]' : ''}`} />
+              </button>
+              
+              {isMobileToolsOpen && (
+                <div className="pl-4 mt-1 space-y-1 ml-4 border-l-2 border-[#F97316]/20">
+                  <Link 
+                    href="/tools/wage-calculator"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:text-[#F97316] hover:bg-white/5 transition"
+                  >
+                    <Calculator size={16} /> Wage Calculator
+                  </Link>
+                </div>
+              )}
+            </div>
+
             <MobileNavLink href="/socials" onClick={() => setIsOpen(false)}>Socials</MobileNavLink>
             
             {session?.user?.role === "ADMIN" && (
