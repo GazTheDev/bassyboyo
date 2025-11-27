@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
 import Link from "next/link";
 import { Trash2, Edit, Shield, User as UserIcon } from "lucide-react";
 import { deleteUserAsAdmin } from "@/app/actions/admin-users";
 import { auth } from "@/auth";
 
-const prisma = new PrismaClient();
 
 export default async function AdminUsersList() {
   const session = await auth();

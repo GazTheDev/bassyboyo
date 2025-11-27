@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
 import DownloadCard from "@/components/DownloadCard";
 
 // Initialize the database connection
-const prisma = new PrismaClient();
 
 export default async function DownloadsPage() {
   // 1. Fetch data from SQLite

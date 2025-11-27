@@ -1,11 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
 import Link from "next/link";
 import { ArrowLeft, MessageSquare, User, Calendar, Tag, Clock } from "lucide-react";
 import { auth } from "@/auth";
 import CommentForm from "@/components/CommentForm";
 import ReactMarkdown from "react-markdown";
 
-const prisma = new PrismaClient();
 
 interface PageProps {
   params: Promise<{ id: string }>;

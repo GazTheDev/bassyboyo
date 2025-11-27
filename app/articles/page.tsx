@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
 import Link from "next/link";
 import { BookOpen, Calendar, ArrowRight, Tag } from "lucide-react";
 
-const prisma = new PrismaClient();
 
 // Helper function to strip Markdown and create a clean excerpt
 function getExcerpt(content: string) {

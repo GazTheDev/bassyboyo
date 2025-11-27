@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
 import Link from "next/link";
 import { Plus, Trash2, FileText, BookOpen } from "lucide-react";
 import { deleteArticle } from "@/app/actions/articles";
 
-const prisma = new PrismaClient();
 
 export default async function AdminArticlesList() {
   // Fetch articles, newest first

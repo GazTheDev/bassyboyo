@@ -1,9 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
 import Link from "next/link";
 import { Download, FileText, Users, MessageSquare, ArrowRight } from "lucide-react";
-
-// Instantiate it right here
-const prisma = new PrismaClient();
 
 export default async function AdminDashboard() {
   // 1. Fetch all stats in parallel

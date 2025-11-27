@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
 import Link from "next/link";
 import { ArrowRight, Download, FileText, Send, Star, ShieldCheck, Users } from "lucide-react";
 import FeedbackForm from "@/components/FeedbackForm";
 
-const prisma = new PrismaClient();
 
 export default async function Home() {
   // 1. Fetch latest 5 Downloads

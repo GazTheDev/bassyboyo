@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
 import Link from "next/link";
 import { Plus, Trash2, FileText } from "lucide-react";
 import { deleteDownload } from "@/app/actions/downloads";
 
-const prisma = new PrismaClient();
+
 
 export default async function AdminDownloadsList() {
   const downloads = await prisma.download.findMany({
