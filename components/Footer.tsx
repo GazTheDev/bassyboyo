@@ -63,7 +63,7 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8 mt-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4">
           
           <p className="text-xs text-gray-400">
-            &copy; {currentYear} BassyBoy Mods. All rights reserved.
+            &copy; {currentYear} BassyBoy Mods. All rights reserved. | Handcrafted by Gareth Davies | Made with <Heart className="inline-block mb-1 text-red-500" size={12} /> in West Cumbria.
           </p>
 
           <p className="text-[10px] text-gray-500 max-w-md text-center md:text-right">

@@ -56,8 +56,18 @@ export default function NavbarClient({ session }: { session: any }) {
                       </div>
                     </Link>
                     
-                    {/* Placeholder for future tool */}
-                    {/* <div className="p-3 text-xs text-center text-gray-400 italic">More tools coming soon...</div> */}
+                      <Link 
+                      href="/tools/transfer-calculator"
+                      className="flex items-start gap-3 p-3 rounded-lg hover:bg-orange-50 transition-colors group/item"
+                    >
+                      <div className="bg-[#064E3B]/10 text-[#064E3B] p-2 rounded-md group-hover/item:bg-[#F97316] group-hover/item:text-white transition-colors shrink-0">
+                        <Calculator size={20} />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-gray-900 group-hover/item:text-[#F97316]">Transfer Calculator</div>
+                        <div className="text-xs text-gray-500 leading-tight mt-1">Convert annual salaries to weekly wages instantly.</div>
+                      </div>
+                    </Link>
                   </div>
                 </div>
               </div>
