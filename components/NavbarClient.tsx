@@ -29,7 +29,7 @@ export default function NavbarClient({ session }: { session: any }) {
             <NavLink href="/">Home</NavLink>
             <NavLink href="/downloads">Downloads</NavLink>
             <NavLink href="/articles">Articles</NavLink>
-            
+            <NavLink href="/stadium-pack">Stadium Pack</NavLink>
             {/* TOOLS MEGA DROPDOWN */}
             <div className="relative group">
               <button className="flex items-center gap-1 text-gray-300 hover:text-[#F97316] px-3 py-2 rounded-md text-sm font-medium transition-colors outline-none">
