@@ -19,7 +19,7 @@ export default async function Home() {
   });
 
   // --- CONFIG: CHANGE YOUR VIDEO ID HERE ---
-  const LATEST_VIDEO_ID = "74ru5kxciXw"; // Replace this ID with your actual YouTube video ID
+  const LATEST_VIDEO_ID = "QtXEgBdk1KM"; // Replace this ID with your actual YouTube video ID
 
   // --- CONFIG: FM TIPS ---
   const fmTips = [
