@@ -13,13 +13,24 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
-  password      String?   
-  role          String    @default("USER") 
+  password      String?
+  role          String    @default("USER") // "ADMIN", "CONTENT_CREATOR", "USER"
   image         String?
   createdAt     DateTime  @default(now())
   
   // Relations
   comments      Comment[]
+  topics        ForumTopic[]
+  posts         ForumPost[]
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+  
+  @@unique([email, token])
 }
 
 // --- CONTENT MODELS ---
@@ -30,27 +41,22 @@ model Download {
   description String
   fileUrl     String
   category    String
+  version     String    @default("1.0")
   downloads   Int       @default(0)
   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
   comments    Comment[]
 }
 
 model Article {
   id          String    @id @default(cuid())
   title       String
-  content     String    
-  category    String    
+  content     String
+  category    String
+  isPremium   Boolean   @default(false)
   createdAt   DateTime  @default(now())
   comments    Comment[] 
 }
-
-model NewsletterSubscriber {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  createdAt DateTime @default(now())
-}
-
-// --- COMMENT MODEL ---
 
 model Comment {
   id         String   @id @default(cuid())
@@ -60,22 +66,66 @@ model Comment {
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Optional link to Download
   downloadId String?
   download   Download? @relation(fields: [downloadId], references: [id], onDelete: Cascade)
 
-  // Optional link to Article
   articleId  String?
   article    Article?  @relation(fields: [articleId], references: [id], onDelete: Cascade)
 }
 
-// Used for "Forgot Password" functionality
-model PasswordResetToken {
-  id      String   @id @default(cuid())
-  email   String
-  token   String   @unique
-  expires DateTime
+// --- COMMUNITY MODELS ---
+
+model Feedback {
+  id        String   @id @default(cuid())
+  name      String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+// --- FORUM MODELS ---
+
+model ForumCategory {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  slug        String       @unique
+  order       Int          @default(0)
+  topics      ForumTopic[]
+}
+
+model ForumTopic {
+  id          String        @id @default(cuid())
+  title       String
+  content     String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  isPinned    Boolean       @default(false)
+  isLocked    Boolean       @default(false)
   
-  // Clean up: Ensure we don't have multiple valid tokens for one email easily
-  @@unique([email, token])
+  categoryId  String
+  category    ForumCategory @relation(fields: [categoryId], references: [id])
+  
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  
+  posts       ForumPost[]
+}
+
+model ForumPost {
+  id          String     @id @default(cuid())
+  content     String
+  createdAt   DateTime   @default(now())
+  
+  topicId     String
+  topic       ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
 }

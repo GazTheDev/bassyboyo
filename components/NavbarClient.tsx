@@ -30,6 +30,7 @@ export default function NavbarClient({ session }: { session: any }) {
             <NavLink href="/downloads">Downloads</NavLink>
             <NavLink href="/articles">Articles</NavLink>
             <NavLink href="/stadium-pack">Stadium Pack</NavLink>
+            <NavLink href="/forum">Forum</NavLink>
             {/* TOOLS MEGA DROPDOWN */}
             <div className="relative group">
               <button className="flex items-center gap-1 text-gray-300 hover:text-[#F97316] px-3 py-2 rounded-md text-sm font-medium transition-colors outline-none">
@@ -149,6 +150,9 @@ export default function NavbarClient({ session }: { session: any }) {
             <MobileNavLink href="/" onClick={() => setIsOpen(false)}>Home</MobileNavLink>
             <MobileNavLink href="/downloads" onClick={() => setIsOpen(false)}>Downloads</MobileNavLink>
             <MobileNavLink href="/articles" onClick={() => setIsOpen(false)}>Articles</MobileNavLink>
+            <MobileNavLink href="/stadium-pack" onClick={() => setIsOpen(false)}>Stadium Pack</MobileNavLink>
+            <MobileNavLink href="/forum" onClick={() => setIsOpen(false)}>Forum</MobileNavLink>
+
             
             {/* Mobile Tools Toggle */}
             <div>

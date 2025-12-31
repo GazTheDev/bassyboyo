@@ -43,17 +43,15 @@ export default function StadiumPackPage() {
           <div className="pt-8 flex flex-col md:flex-row items-center justify-center gap-6">
             
             {/* The "Coming Soon" Button */}
-            <button disabled className="group relative px-8 py-4 bg-gray-800 rounded-xl font-bold text-gray-400 cursor-not-allowed border border-gray-700 overflow-hidden">
-              <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(0,0,0,0.2)_10px,rgba(0,0,0,0.2)_20px)] opacity-50"></div>
+            <button  className="group relative px-8 py-4 bg-[#866128] rounded-xl font-bold text-white-400 border border-gray-700 overflow-hidden">
+              
               <span className="relative flex items-center gap-2">
-                <Lock size={18} /> Download Coming Soon
+                <a href="https://sortitoutsi.net/content/75819/fm26-stadium-megapack">Download Now</a>
               </span>
             </button>
 
             {/* Notify Button */}
-            <a href="#notify" className="text-white hover:text-[#F97316] font-medium transition-colors underline decoration-transparent hover:decoration-[#F97316] underline-offset-4">
-              Get notified when it drops
-            </a>
+           
           </div>
 
         </div>

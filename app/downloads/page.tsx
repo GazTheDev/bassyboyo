@@ -1,49 +1,46 @@
-import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
+import prisma from "@/lib/prisma";
 import DownloadCard from "@/components/DownloadCard";
 
-// Initialize the database connection
-
 export default async function DownloadsPage() {
-  // 1. Fetch data from SQLite
-  // We use 'findMany' to get all records from the 'Download' table
+  // Fetch all downloads, newest first
   const downloads = await prisma.download.findMany({
     orderBy: {
-      downloads: 'desc', // Sort by most popular
+      createdAt: 'desc',
     },
   });
 
   return (
-    <main className="min-h-screen p-8 max-w-6xl mx-auto">
-      {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-bassy-green">Download Center</h1>
-        <p className="text-gray-600 mt-2">
-          The latest tactics, databases, and graphics for Football Manager.
-        </p>
-      </div>
-
-      {/* The Grid */}
-      {/* 'grid-cols-1 md:grid-cols-3' means: 1 column on mobile, 3 on desktop */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        {downloads.map((item) => (
-          <DownloadCard 
-            key={item.id}
-            id={item.id}
-            title={item.title}
-            category={item.category}
-            downloads={item.downloads}
-          />
-        ))}
-
-      </div>
-
-      {/* Empty State (just in case) */}
-      {downloads.length === 0 && (
-        <div className="text-center py-20 text-gray-500 bg-white rounded-xl">
-          No downloads found. Run the seed script!
+    <main className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-[#064E3B]">Download Center</h1>
+          <p className="text-gray-600 mt-2">
+            The latest tactics, databases, and graphics for Football Manager.
+          </p>
         </div>
-      )}
+
+        {/* The Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {downloads.map((item) => (
+            <DownloadCard 
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              category={item.category}
+              downloads={item.downloads}
+            />
+          ))}
+        </div>
+
+        {/* Empty State */}
+        {downloads.length === 0 && (
+          <div className="text-center py-20 text-gray-500 bg-white rounded-xl border border-gray-200 shadow-sm">
+            <p className="text-lg font-medium">No downloads found.</p>
+            <p className="text-sm">Check back later for new content!</p>
+          </div>
+        )}
+      </div>
     </main>
   );
 }

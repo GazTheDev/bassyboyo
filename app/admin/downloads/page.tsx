@@ -1,9 +1,7 @@
-import prisma from "@/lib/prisma"; // <--- IMPORT THE SINGLETON HERE
+import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { Plus, Trash2, FileText } from "lucide-react";
+import { Plus, Trash2, FileText, Edit2 } from "lucide-react"; // Added Edit2
 import { deleteDownload } from "@/app/actions/downloads";
-
-
 
 export default async function AdminDownloadsList() {
   const downloads = await prisma.download.findMany({
@@ -13,12 +11,11 @@ export default async function AdminDownloadsList() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-bassy-green">Manage Downloads</h1>
+        <h1 className="text-2xl font-bold text-[#064E3B]">Manage Downloads</h1>
         
-        {/* The "Add New" Button */}
         <Link 
           href="/admin/downloads/new" 
-          className="bg-orange-700 text-black px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-bassy-orange-dark transition"
+          className="bg-[#F97316] text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-[#c2410c] transition"
         >
           <Plus size={20} /> Add New Mod
         </Link>
@@ -30,6 +27,7 @@ export default async function AdminDownloadsList() {
             <tr>
               <th className="p-4">Title</th>
               <th className="p-4">Category</th>
+              <th className="p-4">Ver.</th>
               <th className="p-4">Downloads</th>
               <th className="p-4 text-right">Actions</th>
             </tr>
@@ -43,18 +41,24 @@ export default async function AdminDownloadsList() {
                     {item.category}
                   </span>
                 </td>
+                <td className="p-4 text-xs font-mono text-gray-500">{item.version}</td>
                 <td className="p-4 text-gray-500">{item.downloads}</td>
                 <td className="p-4 text-right flex justify-end gap-2">
                   
                   {/* View Button */}
-                  <Link href={`/downloads/${item.id}`} className="text-gray-400 hover:text-bassy-green">
+                  <Link href={`/downloads/${item.id}`} className="text-gray-400 hover:text-[#064E3B]" title="View">
                     <FileText size={20} />
                   </Link>
 
-                  {/* Delete Button (Wrapped in a form for Server Action) */}
+                  {/* Edit Button - NEW */}
+                  <Link href={`/admin/downloads/${item.id}`} className="text-gray-400 hover:text-[#F97316]" title="Edit">
+                    <Edit2 size={20} />
+                  </Link>
+
+                  {/* Delete Button */}
                   <form action={deleteDownload}>
                     <input type="hidden" name="id" value={item.id} />
-                    <button type="submit" className="text-gray-400 hover:text-red-500">
+                    <button type="submit" className="text-gray-400 hover:text-red-500" title="Delete">
                       <Trash2 size={20} />
                     </button>
                   </form>
