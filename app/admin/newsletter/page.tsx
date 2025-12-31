@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Download, Mail, Users } from "lucide-react";
+import { Download, Mail, Users, Send} from "lucide-react";
 
 export default async function AdminNewsletterPage() {
   const subscriberCount = await prisma.newsletterSubscriber.count();
@@ -28,13 +28,19 @@ export default async function AdminNewsletterPage() {
               <li>Select <strong>"Import Contacts"</strong> and upload this file.</li>
             </ol>
           </div>
-
+<a
+  href="/admin/newsletter/send"
+  className="inline-flex items-center gap-2 bg-[#F97316] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#c2410c] transition shadow-lg ml-4"
+>
+  <Send size={20} /> Compose Email
+</a>
           <a
             href="/api/admin/export-subscribers"
             className="inline-flex items-center gap-2 bg-[#064E3B] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#043d2e] transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             <Download size={20} /> Download Subscriber List
           </a>
+          
           
         </div>
       </div>

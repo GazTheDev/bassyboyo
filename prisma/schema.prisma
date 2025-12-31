@@ -48,6 +48,13 @@ model Download {
   comments    Comment[]
 }
 
+// --- ANALYTICS ---
+model DailyAnalytics {
+  id        String   @id @default(cuid())
+  date      DateTime @unique // Stored as YYYY-MM-DD 00:00:00
+  views     Int      @default(0)
+}
+
 model Article {
   id          String    @id @default(cuid())
   title       String

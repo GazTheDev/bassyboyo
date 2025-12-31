@@ -1,27 +1,30 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { ArrowRight, Download, FileText, Send, Star, ShieldCheck, Users, Youtube, Lightbulb, Mail } from "lucide-react";
+import { ArrowRight, Download, FileText, Star, ShieldCheck, Users, Youtube, Lightbulb, Mail, MessageCircle, MessageSquare } from "lucide-react";
 import FeedbackForm from "@/components/FeedbackForm";
 import HomepageSearch from "@/components/HomepageSearch";
 import NewsletterForm from "@/components/NewsletterForm";
 import NewsletterPopup from "@/components/NewsletterPopup";
+
 export default async function Home() {
-  // 1. Fetch latest 5 Downloads
-  const recentDownloads = await prisma.download.findMany({
-    take: 5,
-    orderBy: { createdAt: "desc" },
-  });
+  // Fetch all data in parallel for performance
+  const [recentDownloads, recentArticles, recentTopics, recentComments] = await Promise.all([
+    prisma.download.findMany({ take: 5, orderBy: { createdAt: "desc" } }),
+    prisma.article.findMany({ take: 5, orderBy: { createdAt: "desc" } }),
+    prisma.forumTopic.findMany({ 
+      take: 5, 
+      orderBy: { createdAt: "desc" },
+      include: { _count: { select: { posts: true } } }
+    }),
+    prisma.comment.findMany({ 
+      take: 5, 
+      orderBy: { createdAt: "desc" },
+      include: { user: true, download: true, article: true }
+    }),
+  ]);
 
-  // 2. Fetch latest 5 Articles
-  const recentArticles = await prisma.article.findMany({
-    take: 5,
-    orderBy: { createdAt: "desc" },
-  });
+  const LATEST_VIDEO_ID = "74ru5kxciXw"; 
 
-  // --- CONFIG: CHANGE YOUR VIDEO ID HERE ---
-  const LATEST_VIDEO_ID = "QtXEgBdk1KM"; // Replace this ID with your actual YouTube video ID
-
-  // --- CONFIG: FM TIPS ---
   const fmTips = [
     "Check your Medical Centre weekly to prevent injury crises before they happen.",
     "Don't ignore Team Cohesion. A happy squad overperforms; an unhappy one collapses.",
@@ -38,9 +41,7 @@ export default async function Home() {
     <main className="min-h-screen bg-gray-50">
       
       {/* --- HERO SECTION --- */}
-      {/* Added z-30 to the section itself to ensure the Search Dropdown floats OVER the Tip Bar (z-20) */}
       <section className="bg-[#064E3B] text-white py-20 px-4 relative z-30">
-        {/* Abstract Background Shapes (Wrapped to prevent overflow clipping the search dropdown) */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#F97316]/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
@@ -57,7 +58,6 @@ export default async function Home() {
             Welcome to BassyBoy Mods. We provide the elite tactics, wonderkid databases, and graphical overhauls you need to dominate the league.
           </p>
 
-          {/* SEARCH BAR */}
           <HomepageSearch />
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -78,7 +78,6 @@ export default async function Home() {
       </section>
 
       {/* --- RANDOM TIP BAR --- */}
-      {/* z-20 sits below the Hero section (z-30) so the dropdown can cover it */}
       <div className="bg-[#F97316] text-white py-3 px-4 shadow-md relative z-20">
         <div className="max-w-6xl mx-auto flex items-center justify-center gap-3 text-center text-sm md:text-base font-medium">
           <Lightbulb className="shrink-0 text-white fill-white/20" size={20} />
@@ -89,7 +88,7 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* --- LATEST YOUTUBE VIDEO SECTION --- */}
+      {/* --- LATEST YOUTUBE VIDEO --- */}
       <section className="bg-black py-12 border-b border-gray-800">
         <div className="max-w-4xl mx-auto px-4">
             <div className="flex items-center justify-center gap-2 mb-6 text-white/90">
@@ -97,7 +96,6 @@ export default async function Home() {
                 <h2 className="text-2xl font-bold">Latest Channel Upload</h2>
             </div>
             
-            {/* 16:9 Aspect Ratio Container */}
             <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-gray-900">
                 <iframe 
                     className="absolute top-0 left-0 w-full h-full"
@@ -119,11 +117,13 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* --- CONTENT GRID (Downloads & Articles) --- */}
+      {/* --- MAIN CONTENT GRID --- */}
       <section className="max-w-6xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        
+        {/* ROW 1: DOWNLOADS & ARTICLES */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           
-          {/* LEFT: Latest Downloads */}
+          {/* Latest Downloads */}
           <div>
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold text-[#064E3B] flex items-center gap-2">
@@ -151,7 +151,7 @@ export default async function Home() {
             </div>
           </div>
 
-          {/* RIGHT: Latest Articles */}
+          {/* Latest Articles */}
           <div>
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold text-[#064E3B] flex items-center gap-2">
@@ -179,6 +179,73 @@ export default async function Home() {
           </div>
 
         </div>
+
+        {/* ROW 2: FORUM & COMMENTS */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-12 border-t border-gray-200">
+          
+          {/* Latest Forum Discussions */}
+          <div>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-[#064E3B] flex items-center gap-2">
+                <MessageSquare className="text-[#F97316]" /> Recent Discussions
+              </h2>
+              <Link href="/forum" className="text-sm font-bold text-gray-500 hover:text-[#F97316]">Visit Forum</Link>
+            </div>
+            
+            <div className="space-y-3">
+              {recentTopics.map((topic) => (
+                <Link key={topic.id} href={`/forum/topic/${topic.id}`} className="block group">
+                  <div className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 transition">
+                    <div className="flex items-center gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#F97316]"></div>
+                      <h3 className="font-medium text-gray-700 group-hover:text-[#064E3B] transition-colors line-clamp-1">
+                        {topic.title}
+                      </h3>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                      <MessageCircle size={12} /> {topic._count.posts}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+              {recentTopics.length === 0 && <p className="text-gray-500 italic">No discussions yet.</p>}
+            </div>
+          </div>
+
+          {/* Recent Comments */}
+          <div>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-[#064E3B] flex items-center gap-2">
+                <Users className="text-[#F97316]" /> Community Chatter
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              {recentComments.map((comment) => {
+                const link = comment.downloadId ? `/downloads/${comment.downloadId}` : `/articles/${comment.articleId}`;
+                const title = comment.download?.title || comment.article?.title || "Deleted Content";
+                
+                return (
+                  <Link key={comment.id} href={link} className="block group">
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:bg-white hover:shadow-sm hover:border-gray-200 transition-all">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold text-[#064E3B]">{comment.user?.name || "Manager"}</span>
+                        <span className="text-[10px] text-gray-400">{comment.createdAt.toLocaleDateString()}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 line-clamp-2 italic">"{comment.content}"</p>
+                      <div className="mt-2 text-[10px] text-gray-400 flex items-center gap-1">
+                        on <span className="text-[#F97316] font-medium truncate max-w-[200px]">{title}</span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+              {recentComments.length === 0 && <p className="text-gray-500 italic">No comments yet.</p>}
+            </div>
+          </div>
+
+        </div>
+
       </section>
 
       {/* --- ABOUT SECTION --- */}
@@ -216,9 +283,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* --- NEWSLETTER SECTION (THE SCOUTING REPORT) --- */}
+      {/* --- NEWSLETTER SECTION --- */}
       <section className="py-20 bg-gray-900 relative overflow-hidden">
-        {/* Background mesh effect */}
         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(#F97316 1px, transparent 1px)", backgroundSize: "30px 30px" }}></div>
         
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
@@ -233,13 +299,16 @@ export default async function Home() {
           </p>
           
           <NewsletterForm />
+
+          <p className="mt-8 text-xs text-gray-600">
+             To stop receiving updates, <Link href="/unsubscribe" className="text-gray-500 hover:text-[#F97316] underline decoration-gray-700 underline-offset-4">unsubscribe here</Link>.
+          </p>
         </div>
       </section>
 
       {/* --- FEEDBACK FORM --- */}
       <section className="max-w-2xl mx-auto px-4 py-20">
         <div className="bg-[#064E3B] rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
-          {/* Decorative Circle */}
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#F97316] rounded-full opacity-20 blur-2xl"></div>
           
           <div className="relative z-10">
@@ -247,10 +316,12 @@ export default async function Home() {
             <p className="text-white/70 mb-8">Found a bug or want a specific mod? Let me know directly.</p>
 
             <FeedbackForm />
-            <NewsletterPopup />
+            
           </div>
         </div>
       </section>
+
+      <NewsletterPopup />
 
     </main>
   );

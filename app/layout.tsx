@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar"; // <--- 1. Import it
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import Footer from "@/components/Footer";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <AnalyticsTracker />
         <Navbar /> {/* <--- 2. Place it here, above children */}
         {children}
                 <Analytics />

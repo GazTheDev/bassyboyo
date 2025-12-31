@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, FileBox, BookOpen, Users, Home } from "lucide-react";
+import { LayoutDashboard, FileBox, BookOpen, BarChart3, Users, Home } from "lucide-react";
 import { auth } from "@/auth"; // Import the auth helper
 import { redirect } from "next/navigation"; // Import the redirect helper
 
@@ -45,7 +45,9 @@ export default async function AdminLayout({
           <Link href="/admin/articles" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition">
             <BookOpen size={20} /> Manage Articles
           </Link>
-          
+          <Link href="/admin/analytics" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition">
+  <BarChart3 size={20} /> Analytics
+</Link>
           <Link href="/admin/users" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition">
             <Users size={20} /> Users
           </Link>
