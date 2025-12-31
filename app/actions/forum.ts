@@ -3,8 +3,8 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
+// --- CREATE CATEGORY (ADMIN ONLY) ---
 export async function createCategory(prevState: any, formData: FormData) {
   const session = await auth();
   // @ts-ignore
@@ -14,6 +14,7 @@ export async function createCategory(prevState: any, formData: FormData) {
 
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
+  // Simple slug generation
   const slug = title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
 
   if (!title || !description) {
@@ -43,9 +44,15 @@ export async function createCategory(prevState: any, formData: FormData) {
     return { error: "Failed to create category. Slug might be taken." };
   }
 }
+
+// --- CREATE TOPIC ---
 export async function createTopic(prevState: any, formData: FormData) {
   const session = await auth();
-  if (!session || !session.user) return { error: "You must be logged in." };
+  
+  // FIX: Explicitly check for session.user.id
+  if (!session || !session.user || !session.user.id) {
+    return { error: "You must be logged in." };
+  }
 
   const title = formData.get("title") as string;
   const content = formData.get("content") as string;
@@ -59,40 +66,48 @@ export async function createTopic(prevState: any, formData: FormData) {
         title,
         content,
         categoryId,
-        userId: session.user.id,
+        userId: session.user.id, // TypeScript is now happy because of the check above
       },
     });
     
     revalidatePath(`/forum`);
-    // Redirect is handled in the component usually, but we can return the ID
     return { success: true, topicId: topic.id };
   } catch (e) {
     return { error: "Failed to create topic." };
   }
 }
 
+// --- CREATE REPLY ---
 export async function createReply(prevState: any, formData: FormData) {
   const session = await auth();
-  if (!session || !session.user) return { error: "You must be logged in." };
+  
+  // FIX: Explicitly check for session.user.id
+  if (!session || !session.user || !session.user.id) {
+    return { error: "You must be logged in." };
+  }
 
   const content = formData.get("content") as string;
   const topicId = formData.get("topicId") as string;
 
   if (!content) return { error: "Reply cannot be empty." };
 
-  await prisma.forumPost.create({
-    data: {
-      content,
-      topicId,
-      userId: session.user.id,
-    },
-  });
+  try {
+    await prisma.forumPost.create({
+      data: {
+        content,
+        topicId,
+        userId: session.user.id, // TypeScript is now happy
+      },
+    });
 
-  revalidatePath(`/forum/topic/${topicId}`);
-  return { success: true, message: "Reply posted." };
+    revalidatePath(`/forum/topic/${topicId}`);
+    return { success: true, message: "Reply posted." };
+  } catch (e) {
+    return { error: "Failed to post reply." };
+  }
 }
 
-// UPDATE THIS FUNCTION
+// --- DELETE CATEGORY ---
 export async function deleteCategory(prevState: any, formData: FormData) {
   const session = await auth();
   // @ts-ignore
@@ -103,11 +118,6 @@ export async function deleteCategory(prevState: any, formData: FormData) {
   const id = formData.get("id") as string;
 
   try {
-    // 1. Delete all posts in topics belonging to this category
-    // (Prisma doesn't support deep cascade delete on one relation easily without setup)
-    // Actually, we can just delete the topics if we set relation to Cascade in schema.
-    // Assuming schema doesn't have Cascade on Category->Topic, we do it manually:
-    
     const topics = await prisma.forumTopic.findMany({ where: { categoryId: id } });
     const topicIds = topics.map(t => t.id);
 
@@ -121,7 +131,7 @@ export async function deleteCategory(prevState: any, formData: FormData) {
       where: { categoryId: id }
     });
 
-    // 2. Finally, delete the category
+    // Finally, delete the category
     await prisma.forumCategory.delete({
       where: { id },
     });
