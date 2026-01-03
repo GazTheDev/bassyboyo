@@ -41,6 +41,9 @@ export default async function AdminLayout({
           <Link href="/admin/downloads" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition">
             <FileBox size={20} /> Manage Downloads
           </Link>
+          <Link href="/admin/settings" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition">
+            <FileBox size={20} /> Settings
+          </Link>
           
           <Link href="/admin/articles" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition">
             <BookOpen size={20} /> Manage Articles

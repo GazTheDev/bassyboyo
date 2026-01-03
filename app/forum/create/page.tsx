@@ -1,22 +1,28 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useActionState } from "react";
+import { useActionState, useState } from "react"; // Added useState
 import { createTopic } from "@/app/actions/forum";
 import { ArrowLeft, Save, Loader2, MessageSquare, Info, Shield, ListChecks } from "lucide-react";
 import Link from "next/link";
 import { useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
+import ForumImageUpload from "@/components/ForumImageUpload"; // Import new component
 
-// We separate the form logic into its own component so we can wrap it in Suspense
 function CreateTopicForm() {
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("cat");
   const router = useRouter();
   
   const [state, formAction, isPending] = useActionState(createTopic, null);
+  const [content, setContent] = useState(""); // Manage content state locally
 
-  // If success, redirect (Client side redirect logic)
+  // Handle Image Upload
+  const handleImageUpload = (url: string) => {
+    // Append the markdown image to the current content
+    setContent((prev) => prev + `\n\n![Uploaded Image](${url})\n`);
+  };
+
   useEffect(() => {
     if (state?.success && state.topicId) {
         router.push(`/forum/topic/${state.topicId}`);
@@ -55,12 +61,16 @@ function CreateTopicForm() {
             name="content" 
             rows={12}
             required
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             className="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#F97316] focus:border-transparent transition-all resize-y min-h-[200px]"
             placeholder="Explain your thoughts in detail..."
           />
-          <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
-            <span>Markdown is supported</span>
-            <span>Be descriptive for better answers</span>
+          
+          {/* IMAGE UPLOAD BUTTON */}
+          <div className="flex justify-between items-start mt-2">
+             <ForumImageUpload onUploadComplete={handleImageUpload} />
+             <span className="text-xs text-gray-400 mt-2">Markdown is supported</span>
           </div>
         </div>
 
@@ -84,6 +94,7 @@ function CreateTopicForm() {
   );
 }
 
+// ... Keep existing CreateTopicPage component export ...
 export default function CreateTopicPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-4">
@@ -93,9 +104,7 @@ export default function CreateTopicPage() {
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            {/* Main Form Area */}
             <div className="lg:col-span-2">
-                {/* Wrapping in Suspense prevents build errors with useSearchParams */}
                 <Suspense fallback={
                     <div className="bg-white p-12 rounded-2xl shadow-lg border border-gray-200 text-center">
                         <Loader2 className="animate-spin mx-auto text-[#F97316] mb-4" size={32} />
@@ -106,7 +115,6 @@ export default function CreateTopicPage() {
                 </Suspense>
             </div>
 
-            {/* Sidebar Guidelines */}
             <div className="lg:col-span-1 space-y-6">
                 <div className="bg-[#064E3B] text-white p-6 rounded-2xl shadow-lg">
                     <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
@@ -120,10 +128,6 @@ export default function CreateTopicPage() {
                         <li className="flex gap-3">
                             <span className="bg-white/20 w-5 h-5 rounded-full flex items-center justify-center shrink-0 font-bold text-xs">2</span>
                             <span>Search before posting. Your question might already be answered.</span>
-                        </li>
-                        <li className="flex gap-3">
-                            <span className="bg-white/20 w-5 h-5 rounded-full flex items-center justify-center shrink-0 font-bold text-xs">3</span>
-                            <span>Use clear titles. "Help" is bad. "Help with 4-3-3 Defense" is good.</span>
                         </li>
                     </ul>
                 </div>

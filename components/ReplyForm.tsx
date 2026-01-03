@@ -1,25 +1,37 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react"; // Added useState
 import { createReply } from "@/app/actions/forum";
 import { Send, Loader2 } from "lucide-react";
+import ForumImageUpload from "@/components/ForumImageUpload"; // Import new component
 
 export default function ReplyForm({ topicId }: { topicId: string }) {
   const [state, formAction, isPending] = useActionState(createReply, null);
+  const [content, setContent] = useState("");
+
+  const handleImageUpload = (url: string) => {
+    setContent((prev) => prev + `\n\n![Uploaded Image](${url})\n`);
+  };
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
       <h3 className="font-bold text-gray-900 mb-4">Post a Reply</h3>
       <form action={formAction}>
         <input type="hidden" name="topicId" value={topicId} />
+        
         <textarea
           name="content"
           rows={4}
           required
-          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[#F97316] focus:outline-none mb-4"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[#F97316] focus:outline-none"
           placeholder="Write your reply here..."
         />
-        <div className="flex justify-end">
+        
+        <div className="flex justify-between items-center mt-4">
+          <ForumImageUpload onUploadComplete={handleImageUpload} />
+          
           <button 
             type="submit" 
             disabled={isPending}

@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { ArrowLeft, Plus, MessageCircle, User as UserIcon } from "lucide-react";
+import { ArrowLeft, Plus, MessageCircle, User as UserIcon, Pin } from "lucide-react";
 import { auth } from "@/auth";
 
 interface PageProps {
@@ -15,7 +15,10 @@ export default async function CategoryPage(props: PageProps) {
     where: { id: params.id },
     include: {
       topics: {
-        orderBy: { createdAt: 'desc' },
+        orderBy: [
+          { isPinned: 'desc' }, // Pinned topics first
+          { createdAt: 'desc' } // Then by date
+        ],
         include: {
           user: true,
           _count: { select: { posts: true } }
@@ -60,11 +63,12 @@ export default async function CategoryPage(props: PageProps) {
                 <Link 
                   key={topic.id} 
                   href={`/forum/topic/${topic.id}`}
-                  className="block p-6 hover:bg-orange-50 transition group"
+                  className={`block p-6 hover:bg-orange-50 transition group ${topic.isPinned ? 'bg-orange-50/20' : ''}`}
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#F97316] mb-1">
+                      <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#F97316] mb-1 flex items-center gap-2">
+                        {topic.isPinned && <Pin size={16} className="text-[#F97316] fill-[#F97316]" />}
                         {topic.title}
                       </h3>
                       <div className="flex items-center gap-4 text-xs text-gray-500">

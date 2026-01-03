@@ -1,9 +1,10 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { ArrowLeft, User, ShieldCheck } from "lucide-react";
+import { ArrowLeft, User, ShieldCheck, Pin } from "lucide-react";
 import { auth } from "@/auth";
 import ReactMarkdown from "react-markdown";
-import ReplyForm from "@/components/ReplyForm"; // We will create this
+import ReplyForm from "@/components/ReplyForm";
+import PinTopicButton from "@/components/PinTopicButton";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -12,6 +13,8 @@ interface PageProps {
 export default async function TopicPage(props: PageProps) {
   const params = await props.params;
   const session = await auth();
+  // @ts-ignore
+  const isAdmin = session?.user?.role === "ADMIN";
 
   const topic = await prisma.forumTopic.findUnique({
     where: { id: params.id },
@@ -49,6 +52,16 @@ export default async function TopicPage(props: PageProps) {
                 </div>
                 <div className="text-xs text-gray-500">{topic.createdAt.toLocaleDateString()}</div>
               </div>
+            </div>
+            
+            {/* ADMIN ACTIONS */}
+            <div className="flex items-center gap-2">
+              {topic.isPinned && (
+                <span className="flex items-center gap-1 text-xs font-bold text-[#F97316] bg-orange-50 px-2 py-1 rounded-full border border-orange-100">
+                  <Pin size={12} className="fill-[#F97316]" /> Pinned
+                </span>
+              )}
+              {isAdmin && <PinTopicButton topicId={topic.id} isPinned={topic.isPinned} />}
             </div>
           </div>
           <div className="p-8">

@@ -7,7 +7,7 @@ import NewsletterForm from "@/components/NewsletterForm";
 import NewsletterPopup from "@/components/NewsletterPopup";
 
 export default async function Home() {
-  // Fetch all data in parallel for performance
+  // 1. Fetch content data in parallel
   const [recentDownloads, recentArticles, recentTopics, recentComments] = await Promise.all([
     prisma.download.findMany({ take: 5, orderBy: { createdAt: "desc" } }),
     prisma.article.findMany({ take: 5, orderBy: { createdAt: "desc" } }),
@@ -23,7 +23,17 @@ export default async function Home() {
     }),
   ]);
 
-  const LATEST_VIDEO_ID = "74ru5kxciXw"; 
+  // 2. Fetch Video ID safely (Prevents page crash if DB table is missing)
+  let LATEST_VIDEO_ID = "74ru5kxciXw"; // Default Fallback
+  try {
+    // @ts-ignore - Ignores type error if Prisma Client isn't fully updated yet
+    const siteConfig = await prisma.siteConfig?.findUnique({ where: { id: "config" } });
+    if (siteConfig?.youtubeVideoId) {
+      LATEST_VIDEO_ID = siteConfig.youtubeVideoId;
+    }
+  } catch (error) {
+    console.warn("Site config not found, using default video.");
+  }
 
   const fmTips = [
     "Check your Medical Centre weekly to prevent injury crises before they happen.",
@@ -89,14 +99,14 @@ export default async function Home() {
       </div>
 
       {/* --- LATEST YOUTUBE VIDEO --- */}
-      <section className="bg-black py-12 border-b border-gray-800">
+      <section className="bg-black py-16 border-b border-gray-800">
         <div className="max-w-4xl mx-auto px-4">
-            <div className="flex items-center justify-center gap-2 mb-6 text-white/90">
-                <Youtube className="text-[#FF0000]" size={28} />
-                <h2 className="text-2xl font-bold">Latest Channel Upload</h2>
+            <div className="flex items-center justify-center gap-2 mb-8 text-white/90">
+                <Youtube className="text-[#FF0000]" size={32} />
+                <h2 className="text-3xl font-bold tracking-tight">Latest from the Touchline</h2>
             </div>
             
-            <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-gray-900">
+            <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-gray-900 group">
                 <iframe 
                     className="absolute top-0 left-0 w-full h-full"
                     src={`https://www.youtube.com/embed/${LATEST_VIDEO_ID}`} 
@@ -105,11 +115,11 @@ export default async function Home() {
                     allowFullScreen
                 ></iframe>
             </div>
-             <div className="text-center mt-6">
+             <div className="text-center mt-8">
                 <a 
-                    href="https://youtube.com" 
+                    href="https://youtube.com/@BassyBoy" 
                     target="_blank" 
-                    className="inline-flex items-center gap-2 text-gray-400 hover:text-[#F97316] transition-colors text-sm font-medium"
+                    className="inline-flex items-center gap-2 text-gray-400 hover:text-[#F97316] transition-colors text-sm font-bold uppercase tracking-wider"
                 >
                     Subscribe for more tactics <ArrowRight size={16} />
                 </a>
@@ -118,14 +128,14 @@ export default async function Home() {
       </section>
 
       {/* --- MAIN CONTENT GRID --- */}
-      <section className="max-w-6xl mx-auto px-4 py-16">
+      <section className="max-w-6xl mx-auto px-4 py-20">
         
         {/* ROW 1: DOWNLOADS & ARTICLES */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
           
           {/* Latest Downloads */}
           <div>
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-8 border-b border-gray-200 pb-4">
               <h2 className="text-2xl font-bold text-[#064E3B] flex items-center gap-2">
                 <Download className="text-[#F97316]" /> Latest Drops
               </h2>
@@ -141,7 +151,7 @@ export default async function Home() {
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900 group-hover:text-[#F97316] transition-colors">{item.title}</h3>
-                      <p className="text-xs text-gray-500">{item.category} • {item.downloads} downloads</p>
+                      <p className="text-xs text-gray-500 font-medium">{item.category} • {item.downloads} downloads</p>
                     </div>
                     <ArrowRight size={16} className="ml-auto text-gray-300 group-hover:text-[#F97316] opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
                   </div>
@@ -153,7 +163,7 @@ export default async function Home() {
 
           {/* Latest Articles */}
           <div>
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-8 border-b border-gray-200 pb-4">
               <h2 className="text-2xl font-bold text-[#064E3B] flex items-center gap-2">
                 <FileText className="text-[#F97316]" /> Tactical Board
               </h2>
@@ -169,7 +179,7 @@ export default async function Home() {
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900 group-hover:text-[#F97316] transition-colors">{item.title}</h3>
-                      <p className="text-xs text-gray-500">{item.category} • {item.createdAt.toLocaleDateString()}</p>
+                      <p className="text-xs text-gray-500 font-medium">{item.category} • {item.createdAt.toLocaleDateString()}</p>
                     </div>
                   </div>
                 </Link>
@@ -181,41 +191,41 @@ export default async function Home() {
         </div>
 
         {/* ROW 2: FORUM & COMMENTS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-12 border-t border-gray-200">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           
           {/* Latest Forum Discussions */}
-          <div>
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold text-[#064E3B] flex items-center gap-2">
+          <div className="bg-gray-100 rounded-2xl p-8 border border-gray-200">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-[#064E3B] flex items-center gap-2">
                 <MessageSquare className="text-[#F97316]" /> Recent Discussions
               </h2>
-              <Link href="/forum" className="text-sm font-bold text-gray-500 hover:text-[#F97316]">Visit Forum</Link>
+              <Link href="/forum" className="text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-[#F97316]">Visit Forum</Link>
             </div>
             
             <div className="space-y-3">
               {recentTopics.map((topic) => (
                 <Link key={topic.id} href={`/forum/topic/${topic.id}`} className="block group">
-                  <div className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 transition">
+                  <div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition border border-transparent hover:border-[#F97316]/30">
                     <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#F97316]"></div>
+                      <div className="w-2 h-2 rounded-full bg-[#F97316]"></div>
                       <h3 className="font-medium text-gray-700 group-hover:text-[#064E3B] transition-colors line-clamp-1">
                         {topic.title}
                       </h3>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                    <div className="flex items-center gap-1 text-xs text-gray-400 font-bold">
                       <MessageCircle size={12} /> {topic._count.posts}
                     </div>
                   </div>
                 </Link>
               ))}
-              {recentTopics.length === 0 && <p className="text-gray-500 italic">No discussions yet.</p>}
+              {recentTopics.length === 0 && <p className="text-gray-500 italic text-sm">No discussions yet.</p>}
             </div>
           </div>
 
           {/* Recent Comments */}
           <div>
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold text-[#064E3B] flex items-center gap-2">
+            <div className="flex items-center justify-between mb-6 pt-2">
+              <h2 className="text-xl font-bold text-[#064E3B] flex items-center gap-2">
                 <Users className="text-[#F97316]" /> Community Chatter
               </h2>
             </div>
@@ -227,20 +237,20 @@ export default async function Home() {
                 
                 return (
                   <Link key={comment.id} href={link} className="block group">
-                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:bg-white hover:shadow-sm hover:border-gray-200 transition-all">
+                    <div className="bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md hover:border-[#F97316]/50 transition-all">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-[#064E3B]">{comment.user?.name || "Manager"}</span>
+                        <span className="text-xs font-bold text-[#064E3B] bg-[#064E3B]/10 px-2 py-0.5 rounded-full">{comment.user?.name || "Manager"}</span>
                         <span className="text-[10px] text-gray-400">{comment.createdAt.toLocaleDateString()}</span>
                       </div>
-                      <p className="text-sm text-gray-600 line-clamp-2 italic">"{comment.content}"</p>
-                      <div className="mt-2 text-[10px] text-gray-400 flex items-center gap-1">
+                      <p className="text-sm text-gray-600 line-clamp-2 italic mb-2">"{comment.content}"</p>
+                      <div className="text-[10px] text-gray-400 flex items-center gap-1 border-t border-gray-50 pt-2">
                         on <span className="text-[#F97316] font-medium truncate max-w-[200px]">{title}</span>
                       </div>
                     </div>
                   </Link>
                 );
               })}
-              {recentComments.length === 0 && <p className="text-gray-500 italic">No comments yet.</p>}
+              {recentComments.length === 0 && <p className="text-gray-500 italic text-sm">No comments yet.</p>}
             </div>
           </div>
 
@@ -249,52 +259,53 @@ export default async function Home() {
       </section>
 
       {/* --- ABOUT SECTION --- */}
-      <section className="bg-white py-16 border-y border-gray-200">
+      <section className="bg-white py-20 border-y border-gray-200">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-[#064E3B] mb-6">About BassyBoy</h2>
-          <p className="text-lg text-gray-600 leading-relaxed mb-10">
+          <h2 className="text-3xl font-extrabold text-[#064E3B] mb-6">About BassyBoy</h2>
+          <p className="text-lg text-gray-600 leading-relaxed mb-12">
             I've been playing Football Manager since the Championship Manager 01/02 days. 
-            This site is a collection of my personal mods that I've created over the years to enhance my gameplay experience.
+            This site is a collection of my personal mods, tactical experiments, and graphical tweaks designed to make your save more immersive.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-4 bg-gray-50 rounded-xl">
-              <div className="bg-[#F97316]/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-[#F97316]">
-                <ShieldCheck size={24} />
+            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-[#F97316]/50 transition-colors">
+              <div className="bg-[#F97316]/10 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 text-[#F97316]">
+                <ShieldCheck size={28} />
               </div>
-              <h3 className="font-bold text-gray-900">Transform Your Game!</h3>
-              <p className="text-sm text-gray-500 mt-2">With my mods you will be able to transform your Football Manager 26 gameplay!.</p>
+              <h3 className="font-bold text-gray-900 text-lg mb-2">Transform Your Game</h3>
+              <p className="text-sm text-gray-500">Essential fixes and improvements for Football Manager 2026.</p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-xl">
-              <div className="bg-[#F97316]/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-[#F97316]">
-                <Star size={24} />
+            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-[#F97316]/50 transition-colors">
+              <div className="bg-[#F97316]/10 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 text-[#F97316]">
+                <Star size={28} />
               </div>
-              <h3 className="font-bold text-gray-900">High Quality</h3>
-              <p className="text-sm text-gray-500 mt-2">Tested in-game for at least 1 season.</p>
+              <h3 className="font-bold text-gray-900 text-lg mb-2">High Quality</h3>
+              <p className="text-sm text-gray-500">Every file is tested in-game for at least one full season before release.</p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-xl">
-              <div className="bg-[#F97316]/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-[#F97316]">
-                <Users size={24} />
+            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-[#F97316]/50 transition-colors">
+              <div className="bg-[#F97316]/10 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 text-[#F97316]">
+                <Users size={28} />
               </div>
-              <h3 className="font-bold text-gray-900">Community Driven</h3>
-              <p className="text-sm text-gray-500 mt-2">Join the discussion in the comments.</p>
+              <h3 className="font-bold text-gray-900 text-lg mb-2">Community Driven</h3>
+              <p className="text-sm text-gray-500">Join the locker room discussion and shape future content.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* --- NEWSLETTER SECTION --- */}
-      <section className="py-20 bg-gray-900 relative overflow-hidden">
+      <section className="py-24 bg-gray-900 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(#F97316 1px, transparent 1px)", backgroundSize: "30px 30px" }}></div>
+        <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-gray-900 to-transparent"></div>
         
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 bg-[#F97316]/20 border border-[#F97316] text-[#F97316] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+          <div className="inline-flex items-center gap-2 bg-[#F97316]/20 border border-[#F97316] text-[#F97316] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6 shadow-[0_0_15px_rgba(249,115,22,0.3)]">
             <Mail size={14} /> Monthly Updates
           </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">
-            The Scouting Report
+          <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter">
+            THE SCOUTING REPORT
           </h2>
-          <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto font-light">
             Get the latest wonderkid shortlists, tactic testing results, and site updates delivered straight to your inbox. No spam, just winning.
           </p>
           
@@ -308,8 +319,9 @@ export default async function Home() {
 
       {/* --- FEEDBACK FORM --- */}
       <section className="max-w-2xl mx-auto px-4 py-20">
-        <div className="bg-[#064E3B] rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#F97316] rounded-full opacity-20 blur-2xl"></div>
+        <div className="bg-[#064E3B] rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden transform hover:scale-[1.01] transition-transform duration-500">
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#F97316] rounded-full opacity-20 blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/20 to-transparent"></div>
           
           <div className="relative z-10">
             <h2 className="text-3xl font-bold mb-2">Have a Request?</h2>

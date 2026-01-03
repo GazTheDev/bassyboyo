@@ -8,7 +8,10 @@ datasource db {
   directUrl = env("PRISMA_DATABASE_URL") // Uses direct connection
 }
 // --- AUTH MODELS ---
-
+model SiteConfig {
+  id             String @id @default("config") // We only ever have one row with ID "config"
+  youtubeVideoId String @default("74ru5kxciXw")
+}
 model User {
   id            String    @id @default(cuid())
   name          String?
